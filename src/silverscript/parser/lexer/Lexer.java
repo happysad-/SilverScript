@@ -118,17 +118,19 @@ public class Lexer
 		return false;
 	}
 	
-//	public static boolean isExpression(String string)
-//	{
-//		if(!isIdentifier(string) || !isString(string) || !isKeyword(string))
-//			return true;
-//		return false;
-//	}
-//	
-//	public static boolean isEquation(String string)
-//	{
-//		if(string.contains("="))
-//			return true;
-//		return false;
-//	}
+	public static boolean isExpression(List<Token> tokenList)
+	{
+		for(Token token : tokenList)
+			if(!isIdentifier(token.getValue().toString()) || !isString(token.getValue().toString()) || !isKeyword(token.getValue().toString()))
+				return true;
+		return false;
+	}
+	
+	public static boolean isEquation(List<Token> tokenList)
+	{
+		for(Token token : tokenList)
+			if(token.getValue().toString().contains("="))
+				return true;
+		return false;
+	}
 }

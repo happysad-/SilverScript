@@ -5,6 +5,22 @@ import silverscript.tokens.TokenType;
 
 public class SemanticAnalyser
 {
+	public static boolean isValidEquation(Token[] tokens)
+	{
+		int offset = 0;
+		
+		if(tokens[offset].getType().equals(TokenType.IDENTIFIER))
+			if(tokens[++offset].getValue().equals("="))
+				if(isValidExpression(tokens, 0, null))
+					return true;
+				else
+					return false;
+			else
+			return false;
+		else
+			return false;
+	}
+	
 	@SuppressWarnings("unused")
 	public static boolean isValidExpression(Token[] tokens, int offset, Token lastToken)
 	{
