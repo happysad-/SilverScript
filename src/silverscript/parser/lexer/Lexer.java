@@ -42,6 +42,8 @@ public class Lexer
 				tokenList.add(new Token(current, TokenType.STRING));
 			else if(isDelimiter(current))
 				tokenList.add(new Token(current, TokenType.DELIMITER));
+			else if(isFunction(current))
+				tokenList.add(new Token(current, TokenType.FUNCTION));
 			else throw new UnknownTokenException("Unknown token type!");
 		}
 		
@@ -115,6 +117,21 @@ public class Lexer
 	{
 		if(string.matches("\\(([a-zA-Z0-9])*\\)|\\(([a-zA-Z0-9])*\\s([a-zA-Z0-9])*\\)")) /* Regex matches any delimiters "(...)". */
 			return true;
+		return false;
+	}
+	
+	public static boolean isFunction(String string)
+	{
+		if(string.startsWith("@"))
+			return true;
+		return false;
+	}
+	
+	public static boolean isFunction(List<Token> tokenList)
+	{
+		for(Token token : tokenList)
+			if(token.getValue().toString().startsWith("@"))
+				return true;
 		return false;
 	}
 	

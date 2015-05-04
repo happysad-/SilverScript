@@ -1,9 +1,14 @@
 package silverscript.parser;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import silverscript.evaluator.functions.Function;
+import silverscript.evaluator.functions.Print;
 import silverscript.parser.lexer.Lexer;
 import silverscript.tokens.Token;
 import silverscript.tokens.TokenType;
@@ -11,6 +16,26 @@ import silverscript.tokens.TokenType;
 public class Parser
 {
 	private static Map<String, Object> identifierMap = new HashMap<String, Object>();
+	private static Map<String, Function> functionMap = new HashMap<String, Function>();
+	
+	public static void registerFunctions()
+	{
+		Function print = new Print();
+		
+		functionMap.put(print.getFunctionID(), print);
+	}
+	
+	public static void mmap()
+	{
+		Iterator<Entry<String, Object>> i = identifierMap.entrySet().iterator();
+		
+		while(i.hasNext())
+		{
+			Map.Entry<String, Object> pair = (Map.Entry<String, Object>)i.next();
+			
+			System.out.println("MEM: [" + pair.getKey() + ", " + pair.getValue() + "]");
+		}
+	}
 	
 	public static boolean semanticAnalysis(List<Token> tokenList) throws SemanticException
 	{
@@ -32,6 +57,8 @@ public class Parser
 				return true;	/* True if is a valid expression. */
 			else
 				return false;	/* False if is an invalid expression. */
+		else if(Lexer.isFunction(tokenList))
+			return true;
 		else
 			return false;		/* False if does not fit criteria. */
 	}
@@ -51,6 +78,11 @@ public class Parser
 	{
 		ParsedObject parsedObject = new ParsedObject();
 		
+		if(tokens[offset].getType().equals(TokenType.FUNCTION))
+		{
+			parsedObject.combineParsedObjects(parseFunction(tokens));
+		}
+		
 		if(lastToken == null)
 		{
 			if(tokens[offset].getType().equals(TokenType.IDENTIFIER))
@@ -58,8 +90,15 @@ public class Parser
 				int identifierPointer = offset;
 				int identifierValue = offset + 2;
 
-				identifierMap.put(tokens[identifierPointer].getValue().toString(), tokens[identifierValue].getValue());
-				parsedObject.addIdentifier(new Identifier(tokens[identifierPointer].getValue().toString(), tokens[identifierValue].getValue()));
+				if(tokens[identifierValue].getType().equals(TokenType.NUMBER))
+					identifierMap.put(tokens[identifierPointer].getValue().toString(), tokens[identifierValue].getValue());
+				else if(tokens[identifierValue].getType().equals(TokenType.IDENTIFIER))
+					identifierMap.put(tokens[identifierPointer].getValue().toString(), identifierMap.get(tokens[identifierValue].getValue().toString()));
+				
+				if(!identifierMap.containsKey(tokens[offset]))
+					parsedObject.addIdentifier(new Identifier(tokens[identifierPointer].getValue().toString(), tokens[identifierValue].getValue()));
+				else
+					parsedObject.addToken(new Token(identifierMap.get(tokens[identifierValue].getValue().toString()), TokenType.NUMBER));
 				
 				++offset;
 				++offset;
@@ -161,6 +200,45 @@ public class Parser
 			else
 				throw new ParseException("Unable to create a parse object.");
 		}
+		
+		return parsedObject;
+	}
+	
+	public static ParsedObject parseFunction(Token[] tokens) throws ParseException
+	{
+		ParsedObject parsedObject = new ParsedObject();
+		int offset = 0;
+		
+		if(Lexer.isFunction(tokens[offset].getValue().toString()))
+		{
+			String functionID = tokens[0].getValue().toString();
+			List<Token> reqTokens = new ArrayList<Token>();
+			Token tmp = new Token();
+			
+			if(tokens[++offset].getValue().equals("("))
+			{
+				while(!tmp.getValue().equals(")"))
+				{
+					++offset;
+					
+					tmp = tokens[offset];
+					
+					if(!tokens[offset].getType().equals(TokenType.DELIMITER) || !tokens[offset].getType().equals(TokenType.KEYWORD))
+					{
+						reqTokens.add(tokens[offset]);
+						if(tokens.length - 1 >= offset + 1)
+							if(tokens[offset + 1].getType().equals(TokenType.DELIMITER))
+								continue;
+							else
+								throw new ParseException("Could not create a parsed object.");
+						else
+							parsedObject.addFunction(functionMap.get(functionID).initFunction(reqTokens.toArray(new Token[reqTokens.size()])));
+					}
+				}
+			}
+		}
+		else
+			return parsedObject;
 		
 		return parsedObject;
 	}

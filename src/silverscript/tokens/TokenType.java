@@ -14,5 +14,5 @@ public enum TokenType
 	 * Expression	: <identifier>|<operator>|<number>|<constant>
 	 * Equation		: <identifier> = <expression>*
 	 */
-	KEYWORD, CONSTANT, IDENTIFIER, STRING, OPERATOR, BITOPERATOR, NUMBER, /*DIGIT,*/ DELIMITER;
+	KEYWORD, CONSTANT, IDENTIFIER, STRING, OPERATOR, BITOPERATOR, NUMBER, FUNCTION, DELIMITER;
 }

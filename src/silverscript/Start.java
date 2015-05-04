@@ -3,6 +3,7 @@ package silverscript;
 import java.util.List;
 import java.util.Scanner;
 
+import silverscript.evaluator.functions.Function;
 import silverscript.parser.Identifier;
 import silverscript.parser.ParseException;
 import silverscript.parser.ParsedObject;
@@ -42,9 +43,12 @@ public class Start
 			{
 				System.out.print(">> ");
 				line = in.nextLine();
-				if(line.contains("exit"))
+				if(line.contains("@exit"))
 					break;
-				
+				else if(line.contains("@mmap")) {
+					Parser.mmap();
+					continue;
+				}
 				List<Token> tokens = Lexer.lex(line);
 				
 //				for(Token token : tokens)
@@ -61,6 +65,8 @@ public class Start
 						System.out.println("I[" + identifier.getIdentifier() + ", " + identifier.getValue() + "]");
 					for(Token token : parsedObject.getTokenList())
 						System.out.println("T[" + token.getType().toString() + ", " + token.getValue() + "]");
+					for(Function function : parsedObject.getFunctionList())
+						System.out.println("F[" + function.getFunctionID() + "]");
 				}
 //					Evaluator.evalExpression(tokens.toArray(new Token[tokens.size()]), 0, null);
 				
