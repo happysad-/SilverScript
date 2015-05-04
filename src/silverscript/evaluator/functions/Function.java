@@ -5,7 +5,7 @@ import silverscript.tokens.Token;
 public class Function
 {
 	private String id;
-	private Token[] tokens;
+	protected Token[] tokens;
 	
 	public Function(String id)
 	{
@@ -24,7 +24,7 @@ public class Function
 	
 	public Function initFunction(Token[] tokens) { this.tokens = tokens; return this; }
 	
-	public void executeVoid(Token... tokens) { this.tokens = tokens; }
+//	public void executeVoid(Token... tokens) { this.tokens = tokens; }
 	
-	public float executeFloat(Token... tokens) { this.tokens = tokens; return 0F; }
+	public float execute() { return 0F; }
 }

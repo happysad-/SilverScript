@@ -1,6 +1,5 @@
 package silverscript.evaluator.functions;
 
-import silverscript.tokens.Token;
 
 public class Print extends Function
 {
@@ -10,11 +9,12 @@ public class Print extends Function
 	}
 
 	@Override
-	public void executeVoid(Token... tokens)
+	public float execute()
 	{
 		if(tokens != null)
 			System.out.println(tokens[0].getValue().toString());
 		else
 			System.out.println();
+		return 0F;
 	}
 }

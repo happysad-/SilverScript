@@ -1,7 +1,9 @@
 package silverscript.parser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import silverscript.evaluator.functions.Function;
 import silverscript.tokens.Token;
@@ -9,28 +11,37 @@ import silverscript.tokens.Token;
 public class ParsedObject
 {
 	private List<Token> tokenList;
-	private List<Identifier> identifiers;
+	private Identifier identifier;
 	private List<Function> functionList;
+	private Map<String, Function> functionMap;
 	
 	public ParsedObject()
 	{
 		tokenList = new ArrayList<Token>();
-		identifiers = new ArrayList<Identifier>();
+		identifier = null;
 		functionList = new ArrayList<Function>();
+		functionMap = new HashMap<String, Function>();
 	}
 	
 	public ParsedObject(List<Token> tokenList)
 	{
 		this.tokenList = tokenList;
-		identifiers = new ArrayList<Identifier>();
+		identifier = null;		
 		functionList = new ArrayList<Function>();
+		functionMap = new HashMap<String, Function>();
 	}
 	
 	public void combineParsedObjects(ParsedObject parsedObject)
 	{
 		tokenList.addAll(parsedObject.getTokenList());
-		identifiers.addAll(parsedObject.getIdentifierList());
+		identifier = parsedObject.getIdentifier();
 		functionList.addAll(parsedObject.getFunctionList());
+		functionMap.putAll(parsedObject.getFunctionMap());
+	}
+	
+	public Map<String, Function> getFunctionMap()
+	{
+		return functionMap;
 	}
 	
 	public List<Function> getFunctionList()
@@ -43,9 +54,14 @@ public class ParsedObject
 		return tokenList;
 	}
 	
-	public List<Identifier> getIdentifierList()
+	public Identifier getIdentifier()
 	{
-		return identifiers;
+		return identifier;
+	}
+	
+	public void addFunctionToMap(Function function)
+	{
+		functionMap.put(function.getFunctionID(), function);
 	}
 	
 	public void addFunction(Function function)
@@ -55,7 +71,7 @@ public class ParsedObject
 	
 	public void addIdentifier(Identifier identifier)
 	{
-		identifiers.add(identifier);
+		this.identifier = identifier;
 	}
 	
 	public void addToken(Token token)

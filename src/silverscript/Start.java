@@ -1,16 +1,10 @@
 package silverscript;
 
-import java.util.List;
 import java.util.Scanner;
 
-import silverscript.evaluator.functions.Function;
-import silverscript.parser.Identifier;
 import silverscript.parser.ParseException;
-import silverscript.parser.ParsedObject;
 import silverscript.parser.Parser;
 import silverscript.parser.SemanticException;
-import silverscript.parser.lexer.Lexer;
-import silverscript.tokens.Token;
 import silverscript.tokens.UnknownTokenException;
 
 public class Start
@@ -39,52 +33,22 @@ public class Start
 		
 		try
 		{
-			while(!line.contains("exit"))
+			while(!line.contains("@exit"))
 			{
 				System.out.print(">> ");
 				line = in.nextLine();
+				
 				if(line.contains("@exit"))
 					break;
 				else if(line.contains("@mmap")) {
 					Parser.mmap();
 					continue;
 				}
-				List<Token> tokens = Lexer.lex(line);
 				
-//				for(Token token : tokens)
-//					token.output();
-				
-				ParsedObject parsedObject = null;
-				
-				if(Parser.semanticAnalysis(tokens))
-				{
-					System.out.println("Passed.");
-					parsedObject = Parser.parseTokenList(tokens.toArray(new Token[tokens.size()]), 0, null);
-				
-					for(Identifier identifier : parsedObject.getIdentifierList())
-						System.out.println("I[" + identifier.getIdentifier() + ", " + identifier.getValue() + "]");
-					for(Token token : parsedObject.getTokenList())
-						System.out.println("T[" + token.getType().toString() + ", " + token.getValue() + "]");
-					for(Function function : parsedObject.getFunctionList())
-						System.out.println("F[" + function.getFunctionID() + "]");
-				}
-//					Evaluator.evalExpression(tokens.toArray(new Token[tokens.size()]), 0, null);
-				
-//				List<Token> parseTree = ParseTree.parseExpression(tokens);
-//				Evaluator.evalExpression(parseTree);
+				Interpreter.interpret(line);
 			}
-			
-//			ParseTree.traverse();
 		}
-		catch (UnknownTokenException e)
-		{
-			e.printStackTrace();
-		}
-		catch (SemanticException e)
-		{
-			e.printStackTrace();
-		}
-		catch (ParseException e)
+		catch(ParseException | SemanticException |UnknownTokenException e)
 		{
 			e.printStackTrace();
 		}

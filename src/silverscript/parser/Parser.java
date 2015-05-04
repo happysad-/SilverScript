@@ -37,6 +37,12 @@ public class Parser
 		}
 	}
 	
+	public static void addIdentifier(Identifier identifier)
+	{
+		if(identifier != null)
+			identifierMap.put(identifier.getIdentifier(), identifier.getValue());
+	}
+	
 	public static boolean semanticAnalysis(List<Token> tokenList) throws SemanticException
 	{
 		Token[] tokens = tokenList.toArray(new Token[tokenList.size()]);
@@ -232,7 +238,8 @@ public class Parser
 							else
 								throw new ParseException("Could not create a parsed object.");
 						else
-							parsedObject.addFunction(functionMap.get(functionID).initFunction(reqTokens.toArray(new Token[reqTokens.size()])));
+							parsedObject.addFunctionToMap(functionMap.get(functionID).initFunction(reqTokens.toArray(new Token[reqTokens.size()])));
+//							parsedObject.addFunction(functionMap.get(functionID).initFunction(reqTokens.toArray(new Token[reqTokens.size()])));
 					}
 				}
 			}
